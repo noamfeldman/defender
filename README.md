@@ -1,6 +1,6 @@
-# Defender Arcade (Clone)
+# Astro Strike Arcade (Clone)
 
-A web-based recreation of the classic 1981 arcade game "Defender", built strictly with React, TypeScript, and HTML5 Canvas. This project is a high-performance modern web clone featuring a retro-arcade neon aesthetic, multi-level wave progression, and seamless cross-platform support.
+A web-based recreation of the classic 1981 arcade game "Astro Strike", built strictly with React, TypeScript, and HTML5 Canvas. This project is a high-performance modern web clone featuring a retro-arcade neon aesthetic, multi-level wave progression, and seamless cross-platform support.
 
 ## Screenshots
 

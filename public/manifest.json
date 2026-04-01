@@ -1,0 +1,21 @@
+{
+  "short_name": "Astro-Strike",
+  "name": "Astro-Strike - Arcade Classic",
+  "description": "A classic arcade game of Astro-Strike, built by Noam Feldman with React.",
+  "icons": [
+    {
+      "src": "astro-strike.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "astro-strike.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#000000"
+}

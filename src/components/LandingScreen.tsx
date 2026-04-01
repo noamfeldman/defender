@@ -92,7 +92,7 @@ export const LandingScreen: React.FC<Props> = ({ onStart, onHighScores }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center z-10 gap-8 mt-10 w-full px-4 text-center">
         <h1 className="neon-logo text-4xl sm:text-5xl md:text-7xl font-bold leading-tight break-words max-w-full">
-          DEFENDER
+          ASTRO STRIKE
         </h1>
 
         <div className="flex flex-col items-center gap-6 mt-4">
@@ -122,7 +122,7 @@ export const LandingScreen: React.FC<Props> = ({ onStart, onHighScores }) => {
 
       {/* Woodgrain Footer */}
       <div className="woodgrain w-full py-4 text-center z-20">
-        WOODGRAIN TEXTURE - &copy; 1981 WILLIAMS / 2026 REACTJS
+        Super Shman - © 2026
       </div>
     </div>
   );
