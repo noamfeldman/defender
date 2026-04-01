@@ -1,6 +1,6 @@
 import type { HighScore } from '../types';
 
-const STORAGE_KEY = 'defender_2026_highscores';
+const STORAGE_KEY = 'astro_strike_2026_highscores';
 
 export function getHighScores(): HighScore[] {
   const data = localStorage.getItem(STORAGE_KEY);

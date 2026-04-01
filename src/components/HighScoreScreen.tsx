@@ -10,7 +10,7 @@ export const HighScoreScreen: React.FC<Props> = ({ onBack }) => {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-black p-4 tracking-widest gap-8 text-white">
-        <h2 className="text-4xl text-[#3b82f6] shadow-[0_0_10px_#3b82f6] drop-shadow-[0_0_10px_rgba(59,130,246,0.8)] pb-4 border-b-2 border-[#3b82f6] mb-8">
+        <h2 className="hall-of-fame mb-8">
             HALL OF FAME
         </h2>
 
