@@ -58,17 +58,148 @@ body {
         0 0 5px #fff;
 }
 
-/* 4. Retro Flicker Animation */
+/* Retro Flicker Animation */
 @keyframes flicker {
-    0% {
-        opacity: 0.98;
-    }
+    0% { opacity: 0.98; }
+    50% { opacity: 1; }
+    100% { opacity: 0.99; }
+}
 
-    50% {
-        opacity: 1;
-    }
+/* CRT Scanline Filter */
+.crt::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(
+      rgba(18, 16, 16, 0) 50%, 
+      rgba(0, 0, 0, 0.25) 50%
+    ), 
+    linear-gradient(
+      90deg, 
+      rgba(255, 0, 0, 0.06), 
+      rgba(0, 255, 0, 0.02), 
+      rgba(0, 0, 255, 0.06)
+    );
+  z-index: 100;
+  background-size: 100% 4px, 3px 100%;
+  pointer-events: none;
+}
 
-    100% {
-        opacity: 0.99;
-    }
+.crt::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(18, 16, 16, 0.1);
+  opacity: 0;
+  z-index: 100;
+  pointer-events: none;
+  animation: crt-flicker 0.15s infinite;
+}
+
+@keyframes crt-flicker {
+  0% { opacity: 0.1; }
+  50% { opacity: 0.12; }
+  100% { opacity: 0.09; }
+}
+
+/* Starfield Background */
+.starfield {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  z-index: -2;
+}
+
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+/* Neon Pulse Animation */
+@keyframes neon-pulse {
+  0%, 100% {
+    text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 40px #ff00ff;
+    transform: scale(1);
+  }
+  50% {
+    text-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff, 0 0 80px #ff00ff;
+    transform: scale(1.05);
+  }
+}
+
+.neon-logo {
+  animation: neon-pulse 2s infinite ease-in-out;
+  color: #fff;
+  font-family: var(--font-sans);
+  letter-spacing: 0.2em; /* Smaller on mobile */
+}
+
+@media (min-width: 640px) {
+  .neon-logo {
+    letter-spacing: 0.5em;
+  }
+}
+
+/* Woodgrain Texture */
+.woodgrain {
+  background: #4a2c00;
+  background-image: 
+    repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(0,0,0,0.1) 50px, rgba(0,0,0,0.1) 100px),
+    linear-gradient(to bottom, #5d3a1a, #361e08);
+  border-top: 4px solid #2a1806;
+  color: #d2a679;
+  text-shadow: 1px 1px 0px rgba(0,0,0,0.5);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+}
+
+/* Vector Terrain */
+.vector-terrain {
+  position: absolute;
+  bottom: 60px;
+  left: 0;
+  width: 200%;
+  height: 100px;
+  background: transparent;
+  z-index: -1;
+  animation: landscape-scroll 20s linear infinite;
+}
+
+@keyframes landscape-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes star-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+.starfield-scroll {
+  display: flex;
+  width: 200%;
+  height: 100%;
+  animation: star-scroll 30s linear infinite;
+}
+
+.flash {
+  animation: flash-animation 1s steps(2, start) infinite;
+}
+
+@keyframes flash-animation {
+  to { visibility: hidden; }
 }

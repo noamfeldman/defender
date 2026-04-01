@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface Props {
   onStart: () => void;
@@ -6,38 +6,124 @@ interface Props {
 }
 
 export const LandingScreen: React.FC<Props> = ({ onStart, onHighScores }) => {
+  const [stars, setStars] = useState<{ id: number; left: string; top: string; size: string; opacity: number; delay: string }[]>([]);
+
+  useEffect(() => {
+    const newStars = Array.from({ length: 100 }).map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      size: `${Math.random() * 2 + 1}px`,
+      opacity: Math.random(),
+      delay: `${Math.random() * 5}s`,
+    }));
+    setStars(newStars);
+  }, []);
+
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-black tracking-widest gap-12">
-        <h1 
-            className="relative text-[min(12vw,8rem)] italic font-bold uppercase leading-none text-transparent bg-clip-text select-none pr-8
-                       before:absolute before:content-[attr(data-text)] before:text-[#e00000] before:left-[4px] before:top-[8px] before:-z-10 before:text-shadow-[4px_8px_0_#900000]"
-            data-text="DEFENDER"
-            style={{ 
-                letterSpacing: '-0.1em',
-                backgroundImage: 'linear-gradient(to bottom, #55ffff 55%, #f80000 55%)'
-            }}
-        >
-            DEFENDER
+    <div className="crt relative w-full h-full bg-black overflow-hidden flex flex-col items-center justify-between font-['Press_Start_2P']">
+      {/* Starfield Scrolling Background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="starfield-scroll flex w-[200%] h-full">
+          <div className="relative w-1/2 h-full">
+            {stars.map((star) => (
+              <div
+                key={`star1-${star.id}`}
+                className="absolute bg-white rounded-full opacity-60"
+                style={{
+                  left: star.left,
+                  top: star.top,
+                  width: star.size,
+                  height: star.size,
+                  boxShadow: `0 0 ${star.size} 1px rgba(255, 255, 255, 0.4)`,
+                }}
+              />
+            ))}
+          </div>
+          <div className="relative w-1/2 h-full">
+            {stars.map((star) => (
+              <div
+                key={`star2-${star.id}`}
+                className="absolute bg-white rounded-full opacity-60"
+                style={{
+                  left: star.left,
+                  top: star.top,
+                  width: star.size,
+                  height: star.size,
+                  boxShadow: `0 0 ${star.size} 1px rgba(255, 255, 255, 0.4)`,
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Vector Terrain Background */}
+      <div className="absolute bottom-[60px] left-0 w-full h-32 pointer-events-none z-0">
+        <svg width="100%" height="100%" viewBox="0 0 1000 100" preserveAspectRatio="none">
+          <path
+            d="M 0 80 L 100 60 L 200 90 L 300 40 L 400 70 L 500 20 L 600 80 L 700 50 L 800 90 L 900 30 L 1000 80"
+            fill="none"
+            stroke="#ff0000"
+            strokeWidth="2"
+            className="animate-[landscape-scroll_20s_linear_infinite]"
+          />
+        </svg>
+      </div>
+
+      {/* Animated Ship and Enemies */}
+      <div className="absolute bottom-24 left-10 animate-bounce pointer-events-none">
+         <svg width="40" height="20" viewBox="0 0 40 20">
+            <path d="M 0 10 L 10 5 L 30 5 L 40 10 L 30 15 L 10 15 Z" fill="#fff" stroke="#00ffff" strokeWidth="1" />
+            <path d="M 5 8 L 15 8 L 15 12 L 5 12 Z" fill="#00ffff" />
+         </svg>
+         <div className="text-[8px] text-white mt-1 text-center">SHIP</div>
+      </div>
+
+      <div className="absolute bottom-32 right-1/4 animate-[pulse_1.5s_infinite] pointer-events-none">
+         <svg width="30" height="30" viewBox="0 0 30 30">
+            <rect x="5" y="5" width="20" height="15" fill="#00ff00" stroke="#fff" strokeWidth="1" />
+            <rect x="10" y="20" width="2" height="8" fill="#fff" />
+            <rect x="18" y="20" width="2" height="8" fill="#fff" />
+         </svg>
+         <div className="text-[8px] text-[#00ff00] mt-1 text-center">LANDER</div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col items-center justify-center z-10 gap-8 mt-10 w-full px-4 text-center">
+        <h1 className="neon-logo text-4xl sm:text-5xl md:text-7xl font-bold leading-tight break-words max-w-full">
+          DEFENDER
         </h1>
-        
-        <div className="flex flex-col gap-6 w-64">
-            <button 
-                onClick={onStart}
-                className="py-4 border-2 border-[#00ffcc] text-[#00ffcc] font-bold text-xl uppercase hover:bg-[#00ffcc] hover:text-black transition-all shadow-[0_0_10px_#00ffcc] hover:shadow-[0_0_20px_#00ffcc]"
+
+        <div className="flex flex-col items-center gap-6 mt-4">
+          <div className="text-sm sm:text-base md:text-xl text-[#00ffcc] flash tracking-widest px-2">
+            = SELECT MISSION =
+          </div>
+
+          <div className="flex flex-col gap-4 w-64 sm:w-72">
+            <button
+              onClick={onStart}
+              className="group relative px-6 py-4 bg-transparent border-2 border-[#00ffff] text-[#00ffff] text-lg sm:text-xl transition-all hover:bg-[#00ffff]/20 hover:scale-105 active:scale-95 whitespace-nowrap"
             >
-                Start Game
+              <span className="hidden group-hover:inline absolute left-2">&gt;</span>
+              START GAME
+              <span className="hidden group-hover:inline absolute right-2">&lt;</span>
             </button>
-            <button 
-                onClick={onHighScores}
-                className="py-4 border-2 border-[#ff0055] text-[#ff0055] font-bold text-xl uppercase hover:bg-[#ff0055] hover:text-black transition-all shadow-[0_0_10px_#ff0055] hover:shadow-[0_0_20px_#ff0055]"
+
+            <button
+              onClick={onHighScores}
+              className="px-6 py-4 bg-transparent border-2 border-white/30 text-white/70 text-lg sm:text-xl transition-all hover:border-white hover:text-white whitespace-nowrap"
             >
-                High Scores
+              HIGH SCORES
             </button>
+          </div>
         </div>
-        
-        <div className="absolute bottom-8 text-gray-400 text-sm tracking-widest">
-            INSERT COIN
-        </div>
+      </div>
+
+      {/* Woodgrain Footer */}
+      <div className="woodgrain w-full py-4 text-center z-20">
+        WOODGRAIN TEXTURE - &copy; 1981 WILLIAMS / 2026 REACTJS
+      </div>
     </div>
   );
 };
