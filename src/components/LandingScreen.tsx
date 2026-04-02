@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Button } from './ui/Button';
 
 interface Props {
   onStart: () => void;
@@ -101,21 +102,19 @@ export const LandingScreen: React.FC<Props> = ({ onStart, onHighScores }) => {
           </div>
 
           <div className="flex flex-col gap-2 sm:gap-4 w-56 sm:w-72 landscape:flex-row landscape:w-auto landscape:gap-4">
-            <button
+            <Button
+              variant="primary"
               onClick={onStart}
-              className="group relative px-4 py-3 sm:px-6 sm:py-4 bg-transparent border-2 border-[#00ffff] text-[#00ffff] text-sm sm:text-xl transition-all hover:bg-[#00ffff]/20 hover:scale-105 active:scale-95 whitespace-nowrap landscape:text-xs landscape:py-2 landscape:px-6"
             >
-              <span className="hidden group-hover:inline absolute left-1">&gt;</span>
               START GAME
-              <span className="hidden group-hover:inline absolute right-1">&lt;</span>
-            </button>
+            </Button>
 
-            <button
+            <Button
+              variant="secondary"
               onClick={onHighScores}
-              className="px-4 py-3 sm:px-6 sm:py-4 bg-transparent border-2 border-white/30 text-white/70 text-sm sm:text-xl transition-all hover:border-white hover:text-white whitespace-nowrap landscape:text-xs landscape:py-2 landscape:px-6"
             >
               HIGH SCORES
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ import { GameOverScreen } from './components/GameOverScreen';
 import { HighScoreScreen } from './components/HighScoreScreen';
 import { useIsMobile, useOrientation } from './hooks/useMobileDetection';
 import { RotateCw } from 'lucide-react';
+import { Button } from './components/ui/Button';
 
 export const App: React.FC = () => {
   const [screen, setScreen] = useState<ScreenType>('MAIN_MENU');
@@ -31,12 +32,15 @@ export const App: React.FC = () => {
                 <p className="text-gray-400 text-lg max-w-xs">
                     For the best experience, please rotate your device to <span className="text-[#00ffcc] font-bold">Horizontal (Landscape)</span> mode.
                 </p>
-                <button 
-                    onClick={() => {}} // Just visually available, or we could add a "Continue anyway" if needed
-                    className="mt-10 px-6 py-2 border border-gray-700 text-gray-500 text-xs tracking-[0.2em] uppercase rounded-full"
-                >
-                    Waiting for rotation...
-                </button>
+                <div className="mt-10 opacity-50 pointer-events-none">
+                    <Button 
+                        onClick={() => {}} 
+                        variant="secondary"
+                        disabled
+                    >
+                        Waiting for rotation...
+                    </Button>
+                </div>
             </div>
         )}
         {screen === 'MAIN_MENU' && (

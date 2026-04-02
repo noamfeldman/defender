@@ -1,5 +1,6 @@
 import React from 'react';
 import { useIsMobile, useOrientation } from '../hooks/useMobileDetection';
+import { Button } from './ui/Button';
 
 interface Props {
     onPlay: () => void;
@@ -50,18 +51,24 @@ export const InstructionsScreen: React.FC<Props> = ({ onPlay, onBack }) => {
                 <div className="flex-1 min-h-[10px]" />
 
                 <div className="mt-auto flex flex-row gap-3 w-full justify-center px-4 pb-4 landscape:pb-4">
-                    <button
-                        onClick={onBack}
-                        className="flex-1 max-w-[120px] px-3 py-1.5 border border-gray-700 text-gray-500 text-[8px] hover:text-white hover:border-white transition-all active:scale-95 uppercase tracking-widest landscape:text-[7px] landscape:py-1"
-                    >
-                        BACK
-                    </button>
-                    <button
-                        onClick={onPlay}
-                        className="flex-[1.5] max-w-[200px] px-3 py-1.5 bg-[#00ffcc] text-black font-bold text-[8px] uppercase shadow-[0_0_10px_-5px_#00ffcc] transition-all animate-pulse active:scale-95 tracking-widest landscape:text-[7px] landscape:py-1"
-                    >
-                        LAUNCH MISSION
-                    </button>
+                    <div className="flex-[1.5] max-w-[200px]">
+                        <Button
+                            variant="primary"
+                            onClick={onPlay}
+                            fullWidth
+                        >
+                            START
+                        </Button>
+                    </div>
+                    <div className="flex-1 max-w-[120px]">
+                        <Button
+                            variant="secondary"
+                            onClick={onBack}
+                            fullWidth
+                        >
+                            BACK
+                        </Button>
+                    </div>
                 </div>
             </div>
         );
@@ -129,18 +136,24 @@ export const InstructionsScreen: React.FC<Props> = ({ onPlay, onBack }) => {
             </div>
 
             <div className="mt-6 md:mt-10 flex flex-row gap-6 md:gap-10 w-full justify-center pb-8">
-                <button
-                    onClick={onBack}
-                    className="flex-1 max-w-[150px] md:max-w-[180px] px-6 py-3 md:px-8 md:py-3.5 border-2 border-white/20 text-gray-400 text-base md:text-lg hover:text-white hover:border-white hover:bg-white/5 transition-all active:scale-95 uppercase tracking-[0.2em]"
-                >
-                    RETURN
-                </button>
-                <button
-                    onClick={onPlay}
-                    className="flex-[1.2] max-w-[220px] md:max-w-[280px] px-8 py-3 md:px-10 md:py-4 bg-[#00ffcc] text-black font-black text-base md:text-lg uppercase shadow-[0_0_20px_-5px_#00ffcc] hover:shadow-[0_0_40px_-5px_#00ffcc] hover:scale-105 transition-all animate-pulse active:scale-95 tracking-[0.3em]"
-                >
-                    INITIALIZE MISSION
-                </button>
+                <div className="flex-[1.2] max-w-[220px] md:max-w-[280px]">
+                    <Button
+                        variant="primary"
+                        onClick={onPlay}
+                        fullWidth
+                    >
+                        START
+                    </Button>
+                </div>
+                <div className="flex-1 max-w-[150px] md:max-w-[180px]">
+                    <Button
+                        variant="secondary"
+                        onClick={onBack}
+                        fullWidth
+                    >
+                        RETURN
+                    </Button>
+                </div>
             </div>
         </div>
     );

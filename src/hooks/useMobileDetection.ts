@@ -6,7 +6,7 @@ export const useIsMobile = () => {
     useEffect(() => {
         const checkMobile = () => {
             const hasTouch = window.matchMedia('(pointer: coarse)').matches;
-            const isSmall = window.innerWidth <= 1024;
+            const isSmall = window.innerWidth < 768;
             setIsMobile(hasTouch || isSmall);
         };
 
