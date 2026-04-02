@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { isHighScore, saveHighScore } from '../utils/storage';
+import { Button } from './ui/Button';
 
 interface Props {
   score: number;
@@ -37,22 +38,22 @@ export const GameOverScreen: React.FC<Props> = ({ score, onDone }) => {
                         className="bg-transparent border-b-2 border-[#00ffcc] text-4xl text-center text-white w-32 focus:outline-none placeholder:text-gray-800"
                         autoFocus
                     />
-                    <button 
+                    <Button 
                         type="submit"
                         disabled={initials.length !== 3}
-                        className="px-6 py-2 bg-[#00ffcc] text-black disabled:bg-gray-700 disabled:text-gray-500 rounded font-bold"
+                        variant="primary"
                     >
                         ENTER
-                    </button>
+                    </Button>
                 </form>
             </div>
         ) : (
-            <button 
+            <Button 
                 onClick={onDone}
-                className="mt-12 px-8 py-3 bg-[#00ffcc] text-black font-bold uppercase shadow-[0_0_15px_#00ffcc]"
+                variant="primary"
             >
                 CONTINUE
-            </button>
+            </Button>
         )}
     </div>
   );

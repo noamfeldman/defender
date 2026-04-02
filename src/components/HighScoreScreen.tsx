@@ -3,6 +3,7 @@ import { getHighScores } from '../utils/storage';
 import { useIsMobile } from '../hooks/useMobileDetection';
 import { HallOfFameDesktop } from './HallOfFameDesktop';
 import { HallOfFameMobile } from './HallOfFameMobile';
+import { Button } from './ui/Button';
 
 interface Props {
   onBack: () => void;
@@ -44,12 +45,12 @@ export const HighScoreScreen: React.FC<Props> = ({ onBack }) => {
 
         {/* Footer - Fixed at bottom */}
         <div className="mt-3 flex flex-col items-center justify-center shrink-0 w-full mb-1">
-          <button 
+          <Button
+               variant="secondary"
                onClick={onBack}
-               className="w-full md:w-auto px-8 py-2 bg-transparent border-2 border-gray-500 text-gray-400 hover:text-white hover:border-[#00ffcc] active:bg-[#00ffcc]/10 transition-all uppercase tracking-widest text-sm md:text-lg font-bold shadow-neon"
           >
                RETURN TO MENU
-          </button>
+          </Button>
         </div>
     </div>
   );
