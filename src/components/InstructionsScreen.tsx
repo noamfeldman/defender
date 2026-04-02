@@ -1,80 +1,147 @@
 import React from 'react';
+import { useIsMobile, useOrientation } from '../hooks/useMobileDetection';
 
 interface Props {
-  onPlay: () => void;
-  onBack: () => void;
+    onPlay: () => void;
+    onBack: () => void;
 }
 
 export const InstructionsScreen: React.FC<Props> = ({ onPlay, onBack }) => {
-  return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-black p-6 md:p-8 text-center tracking-widest gap-6 md:gap-10 overflow-y-auto selection:bg-[#00ffcc] selection:text-black">
-        <h2 className="text-2xl md:text-5xl text-[#00ffcc] mb-2 md:mb-6 leading-tight">INSTRUCTIONS</h2>
+    const isMobile = useIsMobile();
+    const orientation = useOrientation();
+    const isLandscape = orientation === 'landscape';
 
-        <div className="flex flex-col md:flex-row gap-8 md:gap-20 text-left max-w-5xl w-full px-2">
-            <div className="flex-1 space-y-4">
-               <h3 className="text-xl md:text-2xl text-[#ff0055] border-b border-[#ff0055] pb-2">DESKTOP</h3>
-               <ul className="text-gray-300 space-y-3 text-sm md:text-base">
-                   <li className="flex flex-wrap items-center gap-2">
-                       <span className="text-white font-bold min-w-[70px] md:min-w-[100px] inline-block">W A S D</span>
-                       <span>/</span>
-                       <span className="text-white font-bold">ARROWS</span>
-                       <span className="text-gray-500">-</span>
-                       <span>MOVE</span>
-                   </li>
-                   <li className="flex items-center gap-2">
-                       <span className="text-white font-bold min-w-[70px] md:min-w-[100px] inline-block">SPACE</span>
-                       <span className="text-gray-500">-</span>
-                       <span>FIRE</span>
-                   </li>
-                   <li className="flex flex-wrap items-center gap-2">
-                       <span className="text-white font-bold min-w-[70px] md:min-w-[100px] inline-block">SHIFT</span>
-                       <span className="text-gray-500">-</span>
-                       <span>THRUST (Faster Move)</span>
-                   </li>
-                   <li className="flex flex-wrap items-center gap-2">
-                       <span className="text-white font-bold min-w-[70px] md:min-w-[100px] inline-block">B</span>
-                       <span className="text-gray-500">-</span>
-                       <span>SMART BOMB (Clear Screen)</span>
-                   </li>
-                   <li className="flex flex-wrap items-center gap-2">
-                       <span className="text-white font-bold min-w-[70px] md:min-w-[100px] inline-block">H</span>
-                       <span className="text-gray-500">-</span>
-                       <span>HYPERSPACE (Random Teleport)</span>
-                   </li>
-               </ul>
+    if (isMobile) {
+        return (
+            <div className="w-full h-full flex flex-col items-center justify-start bg-black p-4 text-center tracking-widest gap-2 overflow-hidden selection:bg-[#00ffcc] selection:text-black font-sans landscape:pt-6">
+                <h2 className="text-xl text-[#00ffcc] mb-1 leading-tight uppercase font-bold italic shadow-[#00ffcc]/20 shadow-sm landscape:text-lg landscape:mb-0">
+                    INSTRUCTIONS
+                </h2>
+
+                <div className="flex flex-col gap-2 text-left w-full px-2 landscape:gap-1">
+                    <div className="flex-1 space-y-2 landscape:space-y-1">
+                        <h3 className="text-lg text-[#ff0055] border-b border-[#ff0055] pb-1 uppercase landscape:text-sm landscape:border-none landscape:pb-0">MOBILE CONTROLS</h3>
+                        <ul className="text-gray-300 space-y-1 text-[10px] sm:text-xs leading-tight landscape:text-[9px]">
+                            <li className="flex flex-wrap items-start gap-2">
+                                <span className="text-[#00ffcc] font-bold min-w-[90px] inline-block shrink-0 uppercase">L-SCREEN</span>
+                                <span className="text-gray-500">|</span>
+                                <span>DRAG TO FLY (JOYSTICK)</span>
+                            </li>
+                            <li className="flex flex-wrap items-start gap-2">
+                                <span className="text-[#00ffcc] font-bold min-w-[90px] inline-block shrink-0 uppercase">R-SCREEN</span>
+                                <span className="text-gray-500">|</span>
+                                <span>TAP BUTTONS FOR ACTION</span>
+                            </li>
+                        </ul>
+
+                        {!isLandscape && (
+                            <div className="mt-2 p-3 border border-[#00ffcc]/30 bg-[#00ffcc]/5 rounded-lg">
+                                <h4 className="text-[#00ffcc] font-bold mb-1 text-[10px] flex items-center gap-2 uppercase tracking-tighter">
+                                    📱 MOBILE PRO-TIP
+                                </h4>
+                                <p className="text-[10px] text-gray-400 leading-tight">
+                                    Rotate to <span className="text-white font-bold">LANDSCAPE</span>. Use left thumb to steer and right to blast!
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="flex-1 min-h-[10px]" />
+
+                <div className="mt-auto flex flex-row gap-3 w-full justify-center px-4 pb-4 landscape:pb-4">
+                    <button
+                        onClick={onBack}
+                        className="flex-1 max-w-[120px] px-3 py-1.5 border border-gray-700 text-gray-500 text-[8px] hover:text-white hover:border-white transition-all active:scale-95 uppercase tracking-widest landscape:text-[7px] landscape:py-1"
+                    >
+                        BACK
+                    </button>
+                    <button
+                        onClick={onPlay}
+                        className="flex-[1.5] max-w-[200px] px-3 py-1.5 bg-[#00ffcc] text-black font-bold text-[8px] uppercase shadow-[0_0_10px_-5px_#00ffcc] transition-all animate-pulse active:scale-95 tracking-widest landscape:text-[7px] landscape:py-1"
+                    >
+                        LAUNCH MISSION
+                    </button>
+                </div>
             </div>
-            
-            <div className="flex-1 space-y-4">
-               <h3 className="text-xl md:text-2xl text-[#ff0055] border-b border-[#ff0055] pb-2">MOBILE</h3>
-               <ul className="text-gray-300 space-y-3 text-sm md:text-base">
-                   <li className="flex flex-wrap items-start gap-2">
-                       <span className="text-white font-bold min-w-[100px] md:min-w-[140px] inline-block shrink-0">LEFT SCREEN</span>
-                       <span className="text-gray-500">-</span>
-                       <span>FLOATING JOYSTICK</span>
-                   </li>
-                   <li className="flex flex-wrap items-start gap-2">
-                       <span className="text-white font-bold min-w-[100px] md:min-w-[140px] inline-block shrink-0">RIGHT ACTIONS</span>
-                       <span className="text-gray-500">-</span>
-                       <span>FIRE / THRUST / BOMBS</span>
-                   </li>
-               </ul>
+        );
+    }
+
+    // Default Desktop View
+    return (
+        <div className="w-full h-full flex flex-col items-center justify-start bg-black p-6 md:p-10 text-center tracking-widest gap-6 md:gap-8 overflow-y-auto selection:bg-[#00ffcc] selection:text-black font-sans">
+            <h2 className="text-4xl md:text-5xl text-[#00ffcc] mt-4 mb-2 md:mb-6 leading-tight uppercase font-bold italic shadow-[#00ffcc]/40 shadow-lg tracking-[0.3em]">
+                MISSION PARAMETERS
+            </h2>
+
+            <div className="flex flex-row gap-12 md:gap-24 text-left max-w-6xl w-full px-4 md:px-8">
+                <div className="flex-1 space-y-4 md:space-y-6">
+                    <h3 className="text-2xl md:text-3xl text-[#ff0055] border-b-2 border-[#ff0055] pb-2 md:pb-3 uppercase font-bold tracking-[0.2em]">PC PILOT</h3>
+                    <ul className="text-gray-300 space-y-2 md:space-y-4 text-base md:text-lg leading-relaxed">
+                        <li className="flex items-center gap-4">
+                            <span className="text-white font-bold min-w-[120px] md:min-w-[140px] inline-block uppercase bg-white/5 px-2 py-1 rounded border border-white/10 text-center text-sm md:text-base">W A S D</span>
+                            <span className="text-gray-600 font-light">|</span>
+                            <span>STEER SPACECRAFT</span>
+                        </li>
+                        <li className="flex items-center gap-4">
+                            <span className="text-white font-bold min-w-[120px] md:min-w-[140px] inline-block uppercase bg-white/5 px-2 py-1 rounded border border-white/10 text-center text-sm md:text-base">SPACE</span>
+                            <span className="text-gray-600 font-light">|</span>
+                            <span>PRIMARY CANNON</span>
+                        </li>
+                        <li className="flex items-center gap-4">
+                            <span className="text-white font-bold min-w-[120px] md:min-w-[140px] inline-block uppercase bg-white/5 px-2 py-1 rounded border border-white/10 text-center text-sm md:text-base">SHIFT</span>
+                            <span className="text-gray-600 font-light">|</span>
+                            <span>ENGINE THRUST</span>
+                        </li>
+                        <li className="flex items-center gap-4">
+                            <span className="text-white font-bold min-w-[120px] md:min-w-[140px] inline-block uppercase bg-white/5 px-2 py-1 rounded border border-white/10 text-center text-sm md:text-base">B / H</span>
+                            <span className="text-gray-600 font-light">|</span>
+                            <span>BOMBS / HYPER</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div className="flex-1 space-y-4 md:space-y-6">
+                    <h3 className="text-2xl md:text-3xl text-[#00ffcc] border-b-2 border-[#00ffcc] pb-2 md:pb-3 uppercase font-bold tracking-[0.2em]">MOBILE LINK</h3>
+                    <ul className="text-gray-300 space-y-2 md:space-y-4 text-base md:text-lg leading-relaxed">
+                        <li className="flex items-center gap-4">
+                            <span className="text-[#00ffcc] font-bold min-w-[120px] md:min-w-[140px] inline-block uppercase bg-[#00ffcc]/5 px-2 py-1 rounded border border-[#00ffcc]/20 text-center text-sm md:text-base">L-HALF</span>
+                            <span className="text-gray-600 font-light">|</span>
+                            <span>DRAG TO NAVIGATE</span>
+                        </li>
+                        <li className="flex items-center gap-4">
+                            <span className="text-[#00ffcc] font-bold min-w-[120px] md:min-w-[140px] inline-block uppercase bg-[#00ffcc]/5 px-2 py-1 rounded border border-[#00ffcc]/20 text-center text-sm md:text-base">R-HALF</span>
+                            <span className="text-gray-600 font-light">|</span>
+                            <span>TAP FOR WEAPONS</span>
+                        </li>
+                    </ul>
+                    
+                    <div className="mt-6 md:mt-10 p-4 md:p-6 border-2 border-[#ff0055]/20 bg-[#ff0055]/5 rounded-2xl relative overflow-hidden group">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-[#ff0055]" />
+                        <h4 className="text-[#ff0055] font-bold mb-1 text-base md:text-lg uppercase tracking-widest">
+                            TACTICAL NOTE
+                        </h4>
+                        <p className="text-sm md:text-base text-gray-400 font-light leading-relaxed">
+                            For mobile devices, rotate to <span className="text-white font-bold underline decoration-[#ff0055]">LANDSCAPE</span> for optimal combat visibility.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="mt-6 md:mt-10 flex flex-row gap-6 md:gap-10 w-full justify-center pb-8">
+                <button
+                    onClick={onBack}
+                    className="flex-1 max-w-[150px] md:max-w-[180px] px-6 py-3 md:px-8 md:py-3.5 border-2 border-white/20 text-gray-400 text-base md:text-lg hover:text-white hover:border-white hover:bg-white/5 transition-all active:scale-95 uppercase tracking-[0.2em]"
+                >
+                    RETURN
+                </button>
+                <button
+                    onClick={onPlay}
+                    className="flex-[1.2] max-w-[220px] md:max-w-[280px] px-8 py-3 md:px-10 md:py-4 bg-[#00ffcc] text-black font-black text-base md:text-lg uppercase shadow-[0_0_20px_-5px_#00ffcc] hover:shadow-[0_0_40px_-5px_#00ffcc] hover:scale-105 transition-all animate-pulse active:scale-95 tracking-[0.3em]"
+                >
+                    INITIALIZE MISSION
+                </button>
             </div>
         </div>
-
-        <div className="mt-4 md:mt-10 flex flex-col sm:flex-row gap-4 md:gap-8 w-full sm:w-auto px-4 md:px-0">
-             <button 
-                onClick={onBack}
-                className="w-full sm:w-auto px-10 py-3 border border-gray-600 text-gray-400 hover:text-white hover:border-white transition-all duration-300 hover:bg-white/5 active:scale-95"
-            >
-                BACK
-            </button>
-            <button 
-                onClick={onPlay}
-                className="w-full sm:w-auto px-12 py-4 bg-[#00ffcc] text-black font-bold uppercase shadow-[0_0_25px_-5px_#00ffcc] hover:shadow-[0_0_35px_-5px_#00ffcc] transition-all duration-300 animate-pulse active:scale-95"
-            >
-                LAUNCH MISSION
-            </button>
-        </div>
-    </div>
-  );
+    );
 };
