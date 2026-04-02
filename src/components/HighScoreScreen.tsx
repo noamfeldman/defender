@@ -1,25 +1,37 @@
-import React from 'react';
-import { getHighScores } from '../utils/storage';
+import React, { useEffect, useState } from 'react';
+import { fetchGlobalHighScores } from '../utils/storage';
 import { useIsMobile } from '../hooks/useMobileDetection';
 import { HallOfFameDesktop } from './HallOfFameDesktop';
 import { HallOfFameMobile } from './HallOfFameMobile';
 import { Button } from './ui/Button';
+import type { HighScore } from '../types';
 
 interface Props {
   onBack: () => void;
 }
 
 export const HighScoreScreen: React.FC<Props> = ({ onBack }) => {
-  const scores = getHighScores();
+  const [scores, setScores] = useState<HighScore[]>([]);
+  const [loading, setLoading] = useState(true);
   const isMobile = useIsMobile();
+
+  useEffect(() => {
+    async function getScores() {
+      const data = await fetchGlobalHighScores();
+      setScores(data);
+      setLoading(false);
+    }
+    getScores();
+  }, []);
 
   return (
     <div className="w-full h-full flex flex-col items-center bg-black p-3 md:p-6 tracking-widest text-white overflow-hidden relative">
         {/* Header - Very compact on small screens */}
         <div className="flex flex-col items-center shrink-0 mt-1 sm:mt-4">
-          <h2 className="hall-of-fame mb-3 text-xl md:text-5xl lg:text-6xl text-center leading-tight">
-              HALL OF FAME
+          <h2 className="hall-of-fame mb-1 text-xl md:text-5xl lg:text-6xl text-center leading-tight">
+              GLOBAL LEADERBOARD
           </h2>
+          <p className="text-[10px] md:text-sm text-[#00ffcc] animate-pulse mb-2">SHARED ACROSS ALL PILOTS</p>
         </div>
 
         {/* Content Area Container with Fade Effect */}
@@ -28,9 +40,14 @@ export const HighScoreScreen: React.FC<Props> = ({ onBack }) => {
             <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-black to-transparent z-10 pointer-events-none" />
             
             <div className="w-full h-full max-w-lg">
-                {scores.length === 0 ? (
+                {loading ? (
+                    <div className="w-full h-full flex flex-col items-center justify-center space-y-4">
+                        <div className="w-8 h-8 border-2 border-t-transparent border-[#00ffcc] rounded-full animate-spin" />
+                        <p className="text-xl text-[#00ffcc] animate-pulse">ESTABLISHING UPLINK...</p>
+                    </div>
+                ) : scores.length === 0 ? (
                     <div className="w-full h-full flex items-center justify-center">
-                        <p className="text-xl text-gray-500">NO SCORES YET</p>
+                        <p className="text-xl text-gray-500">NO SCORES RECORDED</p>
                     </div>
                 ) : (
                     isMobile ? 
@@ -55,3 +72,4 @@ export const HighScoreScreen: React.FC<Props> = ({ onBack }) => {
     </div>
   );
 };
+

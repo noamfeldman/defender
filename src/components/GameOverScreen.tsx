@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { isHighScore, saveHighScore } from '../utils/storage';
+import React, { useState, useEffect } from 'react';
+import { isHighScore, submitGlobalHighScore, fetchGlobalHighScores } from '../utils/storage';
 import { Button } from './ui/Button';
+
 
 interface Props {
   score: number;
@@ -9,12 +10,24 @@ interface Props {
 
 export const GameOverScreen: React.FC<Props> = ({ score, onDone }) => {
   const [initials, setInitials] = useState('');
-  const qualify = isHighScore(score);
+  const [qualify, setQualify] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    async function checkQualification() {
+      const globalScores = await fetchGlobalHighScores();
+      setQualify(isHighScore(score, globalScores));
+      setLoading(false);
+    }
+    checkQualification();
+  }, [score]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
-      if (initials.trim().length === 3) {
-          saveHighScore(initials, score);
+      if (initials.trim().length === 3 && !isSubmitting) {
+          setIsSubmitting(true);
+          await submitGlobalHighScore(initials, score);
           onDone();
       }
   };
@@ -25,9 +38,14 @@ export const GameOverScreen: React.FC<Props> = ({ score, onDone }) => {
         
         <p className="text-3xl text-white">SCORE: {score}</p>
 
-        {qualify ? (
+        {loading ? (
+             <div className="flex flex-col items-center gap-2">
+                 <div className="w-6 h-6 border-2 border-t-transparent border-[#00ffcc] rounded-full animate-spin" />
+                 <p className="text-sm text-[#00ffcc]">CHECKING LEADERBOARD...</p>
+             </div>
+        ) : qualify ? (
             <div className="flex flex-col items-center mt-8 space-y-6">
-                <p className="text-[#00ffcc] text-xl animate-pulse">NEW HIGH SCORE!</p>
+                <p className="text-[#00ffcc] text-xl animate-pulse font-bold">NEW GLOBAL HIGH SCORE!</p>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <input 
                         type="text" 
@@ -35,15 +53,16 @@ export const GameOverScreen: React.FC<Props> = ({ score, onDone }) => {
                         value={initials}
                         onChange={e => setInitials(e.target.value.toUpperCase())}
                         placeholder="AAA"
-                        className="bg-transparent border-b-2 border-[#00ffcc] text-4xl text-center text-white w-32 focus:outline-none placeholder:text-gray-800"
+                        className="bg-transparent border-b-2 border-[#00ffcc] text-4xl text-center text-white w-32 focus:outline-none placeholder:text-gray-800 disabled:opacity-50"
                         autoFocus
+                        disabled={isSubmitting}
                     />
                     <Button 
                         type="submit"
-                        disabled={initials.length !== 3}
+                        disabled={initials.length !== 3 || isSubmitting}
                         variant="primary"
                     >
-                        ENTER
+                        {isSubmitting ? 'UPLOADING...' : 'ENTER HALL OF FAME'}
                     </Button>
                 </form>
             </div>
@@ -58,3 +77,4 @@ export const GameOverScreen: React.FC<Props> = ({ score, onDone }) => {
     </div>
   );
 };
+

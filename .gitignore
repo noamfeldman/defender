@@ -32,3 +32,5 @@ dist-ssr
 
 # ESLint
 .eslintcache
+.vercel
+.env*.local
