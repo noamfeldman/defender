@@ -72,47 +72,47 @@ export const LandingScreen: React.FC<Props> = ({ onStart, onHighScores }) => {
       </div>
 
       {/* Animated Ship and Enemies */}
-      <div className="absolute bottom-24 left-10 animate-bounce pointer-events-none">
+      <div className="absolute bottom-20 left-4 sm:bottom-24 sm:left-10 animate-bounce pointer-events-none landscape:bottom-12 landscape:scale-75">
          <svg width="40" height="20" viewBox="0 0 40 20">
             <path d="M 0 10 L 10 5 L 30 5 L 40 10 L 30 15 L 10 15 Z" fill="#fff" stroke="#00ffff" strokeWidth="1" />
             <path d="M 5 8 L 15 8 L 15 12 L 5 12 Z" fill="#00ffff" />
          </svg>
-         <div className="text-[8px] text-white mt-1 text-center">SHIP</div>
+         <div className="text-[6px] sm:text-[8px] text-white mt-1 text-center">SHIP</div>
       </div>
 
-      <div className="absolute bottom-32 right-1/4 animate-[pulse_1.5s_infinite] pointer-events-none">
+      <div className="absolute bottom-24 right-1/4 sm:bottom-32 animate-[pulse_1.5s_infinite] pointer-events-none landscape:bottom-14 landscape:scale-75">
          <svg width="30" height="30" viewBox="0 0 30 30">
             <rect x="5" y="5" width="20" height="15" fill="#00ff00" stroke="#fff" strokeWidth="1" />
             <rect x="10" y="20" width="2" height="8" fill="#fff" />
             <rect x="18" y="20" width="2" height="8" fill="#fff" />
          </svg>
-         <div className="text-[8px] text-[#00ff00] mt-1 text-center">LANDER</div>
+         <div className="text-[6px] sm:text-[8px] text-[#00ff00] mt-1 text-center">LANDER</div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center z-10 gap-8 mt-10 w-full px-4 text-center">
-        <h1 className="neon-logo text-4xl sm:text-5xl md:text-7xl font-bold leading-tight break-words max-w-full">
+      <div className="flex-1 flex flex-col items-center justify-center z-10 gap-4 sm:gap-8 mt-4 sm:mt-10 w-full px-4 text-center landscape:gap-2 landscape:mt-2">
+        <h1 className="neon-logo text-3xl sm:text-5xl md:text-7xl landscape:text-2xl font-bold leading-tight break-words max-w-full">
           ASTRO STRIKE
         </h1>
 
-        <div className="flex flex-col items-center gap-6 mt-4">
-          <div className="text-sm sm:text-base md:text-xl text-[#00ffcc] flash tracking-widest px-2">
+        <div className="flex flex-col items-center gap-2 sm:gap-6 mt-2 sm:mt-4 landscape:mt-1">
+          <div className="text-[10px] sm:text-base md:text-xl text-[#00ffcc] flash tracking-widest px-2 landscape:text-[8px] landscape:mb-1">
             = SELECT MISSION =
           </div>
 
-          <div className="flex flex-col gap-4 w-64 sm:w-72">
+          <div className="flex flex-col gap-2 sm:gap-4 w-56 sm:w-72 landscape:flex-row landscape:w-auto landscape:gap-4">
             <button
               onClick={onStart}
-              className="group relative px-6 py-4 bg-transparent border-2 border-[#00ffff] text-[#00ffff] text-lg sm:text-xl transition-all hover:bg-[#00ffff]/20 hover:scale-105 active:scale-95 whitespace-nowrap"
+              className="group relative px-4 py-3 sm:px-6 sm:py-4 bg-transparent border-2 border-[#00ffff] text-[#00ffff] text-sm sm:text-xl transition-all hover:bg-[#00ffff]/20 hover:scale-105 active:scale-95 whitespace-nowrap landscape:text-xs landscape:py-2 landscape:px-6"
             >
-              <span className="hidden group-hover:inline absolute left-2">&gt;</span>
+              <span className="hidden group-hover:inline absolute left-1">&gt;</span>
               START GAME
-              <span className="hidden group-hover:inline absolute right-2">&lt;</span>
+              <span className="hidden group-hover:inline absolute right-1">&lt;</span>
             </button>
 
             <button
               onClick={onHighScores}
-              className="px-6 py-4 bg-transparent border-2 border-white/30 text-white/70 text-lg sm:text-xl transition-all hover:border-white hover:text-white whitespace-nowrap"
+              className="px-4 py-3 sm:px-6 sm:py-4 bg-transparent border-2 border-white/30 text-white/70 text-sm sm:text-xl transition-all hover:border-white hover:text-white whitespace-nowrap landscape:text-xs landscape:py-2 landscape:px-6"
             >
               HIGH SCORES
             </button>
@@ -121,7 +121,7 @@ export const LandingScreen: React.FC<Props> = ({ onStart, onHighScores }) => {
       </div>
 
       {/* Woodgrain Footer */}
-      <div className="woodgrain w-full py-4 text-center z-20">
+      <div className="woodgrain w-full py-2 sm:py-4 text-center z-20 text-[10px] sm:text-xs">
         Super Shman - © 2026
       </div>
     </div>
