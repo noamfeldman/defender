@@ -1,6 +1,7 @@
 import React from 'react';
 import { useIsMobile, useOrientation } from '../hooks/useMobileDetection';
 import { Button } from './ui/Button';
+import { PageTitle } from './ui/PageTitle';
 
 interface Props {
     onPlay: () => void;
@@ -14,12 +15,37 @@ export const InstructionsScreen: React.FC<Props> = ({ onPlay, onBack }) => {
 
     if (isMobile) {
         return (
-            <div className="w-full h-full flex flex-col items-center justify-start bg-black p-4 text-center tracking-widest gap-2 overflow-hidden selection:bg-[#00ffcc] selection:text-black font-sans landscape:pt-6">
-                <h2 className="text-xl text-[#00ffcc] mb-1 leading-tight uppercase font-bold italic shadow-[#00ffcc]/20 shadow-sm landscape:text-lg landscape:mb-0">
-                    INSTRUCTIONS
-                </h2>
+            <div className="w-full h-full flex flex-col items-center justify-start bg-black p-4 text-center tracking-widest gap-4 sm:gap-6 overflow-hidden selection:bg-[#00ffcc] selection:text-black font-sans landscape:pt-2">
+                
+                {/* Buttons at Top in Landscape */}
+                {isLandscape && (
+                    <div className="flex flex-row gap-3 w-full justify-center px-4 mb-2 shrink-0">
+                        <div className="flex-[1.5] max-w-[160px]">
+                            <Button
+                                variant="primary"
+                                onClick={onPlay}
+                                fullWidth
+                                className="h-8 text-[10px]"
+                            >
+                                START
+                            </Button>
+                        </div>
+                        <div className="flex-1 max-w-[100px]">
+                            <Button
+                                variant="secondary"
+                                onClick={onBack}
+                                fullWidth
+                                className="h-8 text-[10px]"
+                            >
+                                BACK
+                            </Button>
+                        </div>
+                    </div>
+                )}
 
-                <div className="flex flex-col gap-2 text-left w-full px-2 landscape:gap-1">
+                <PageTitle text="INSTRUCTIONS" as="h2" className="mb-1 landscape:text-lg landscape:mb-0" />
+
+                <div className="flex flex-col gap-2 text-left w-full px-2 landscape:gap-1 overflow-y-auto">
                     <div className="flex-1 space-y-2 landscape:space-y-1">
                         <h3 className="text-lg text-[#ff0055] border-b border-[#ff0055] pb-1 uppercase landscape:text-sm landscape:border-none landscape:pb-0">MOBILE CONTROLS</h3>
                         <ul className="text-gray-300 space-y-1 text-[10px] sm:text-xs leading-tight landscape:text-[9px]">
@@ -48,38 +74,39 @@ export const InstructionsScreen: React.FC<Props> = ({ onPlay, onBack }) => {
                     </div>
                 </div>
 
-                <div className="flex-1 min-h-[10px]" />
+                {!isLandscape && <div className="flex-1 min-h-[10px]" />}
 
-                <div className="mt-auto flex flex-row gap-3 w-full justify-center px-4 pb-4 landscape:pb-4">
-                    <div className="flex-[1.5] max-w-[200px]">
-                        <Button
-                            variant="primary"
-                            onClick={onPlay}
-                            fullWidth
-                        >
-                            START
-                        </Button>
+                {/* Buttons at Bottom in Portrait */}
+                {!isLandscape && (
+                    <div className="mt-auto flex flex-row gap-3 w-full justify-center px-4 pb-4">
+                        <div className="flex-[1.5] max-w-[200px]">
+                            <Button
+                                variant="primary"
+                                onClick={onPlay}
+                                fullWidth
+                            >
+                                START
+                            </Button>
+                        </div>
+                        <div className="flex-1 max-w-[120px]">
+                            <Button
+                                variant="secondary"
+                                onClick={onBack}
+                                fullWidth
+                            >
+                                BACK
+                            </Button>
+                        </div>
                     </div>
-                    <div className="flex-1 max-w-[120px]">
-                        <Button
-                            variant="secondary"
-                            onClick={onBack}
-                            fullWidth
-                        >
-                            BACK
-                        </Button>
-                    </div>
-                </div>
+                )}
             </div>
         );
     }
 
     // Default Desktop View
     return (
-        <div className="w-full h-full flex flex-col items-center justify-start bg-black p-6 md:p-10 text-center tracking-widest gap-6 md:gap-8 overflow-y-auto selection:bg-[#00ffcc] selection:text-black font-sans">
-            <h2 className="text-4xl md:text-5xl text-[#00ffcc] mt-4 mb-2 md:mb-6 leading-tight uppercase font-bold italic shadow-[#00ffcc]/40 shadow-lg tracking-[0.3em]">
-                MISSION PARAMETERS
-            </h2>
+        <div className="w-full h-full flex flex-col items-center justify-start bg-black p-6 md:p-10 text-center tracking-widest gap-10 md:gap-16 overflow-y-auto selection:bg-[#00ffcc] selection:text-black font-sans">
+            <PageTitle text="MISSION PARAMETERS" as="h2" className="mt-4 mb-4 md:mb-10 tracking-[0.3em]" />
 
             <div className="flex flex-row gap-12 md:gap-24 text-left max-w-6xl w-full px-4 md:px-8">
                 <div className="flex-1 space-y-4 md:space-y-6">

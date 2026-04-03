@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'className'> {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary';
   children: React.ReactNode;
   fullWidth?: boolean;
@@ -14,6 +14,7 @@ export const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   children,
   fullWidth = false,
+  className = '',
   ...props
 }) => {
   // Primary (from LandingScreen):
@@ -29,7 +30,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
-      className={`${baseClasses} ${widthClass} font-['Press_Start_2P'] uppercase disabled:opacity-50 disabled:active:scale-100 disabled:cursor-not-allowed`}
+      className={`${baseClasses} ${widthClass} ${className} font-['Press_Start_2P'] uppercase disabled:opacity-50 disabled:active:scale-100 disabled:cursor-not-allowed`}
       {...props}
     >
       <span className="relative flex items-center justify-center gap-2">

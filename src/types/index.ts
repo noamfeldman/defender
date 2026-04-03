@@ -23,7 +23,24 @@ export interface Player extends Entity {
 
 export type EnemyType = 
   | 'LANDER'
-  | 'MUTANT';
+  | 'MUTANT'
+  | 'BOMBER'
+  | 'INTERCEPTOR';
+
+export interface LevelTheme {
+  /** Background fill colour */
+  skyColor: string;
+  /** Main mountain/terrain stroke colour */
+  terrainColor: string;
+  /** Secondary mountain layer colour (parallax) */
+  terrainColorAlt: string;
+  /** Number of stars rendered */
+  starCount: number;
+  /** Terrain roughness multiplier */
+  roughness: number;
+  /** Terrain scale multiplier */
+  scale: number;
+}
 
 export type LanderState = 
   | 'SEARCHING'
@@ -36,6 +53,8 @@ export interface Enemy extends Entity {
   state?: LanderState;
   targetId?: string; // ID of targeted humanoid
   fireTimer: number;
+  /** BOMBER only: countdown before next bomb drop */
+  bombTimer?: number;
 }
 
 export type HumanoidState = 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from './ui/Button';
+import { PageTitle } from './ui/PageTitle';
 
 interface Props {
   onStart: () => void;
@@ -92,9 +93,7 @@ export const LandingScreen: React.FC<Props> = ({ onStart, onHighScores }) => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center z-10 gap-4 sm:gap-8 mt-4 sm:mt-10 w-full px-4 text-center landscape:gap-2 landscape:mt-2">
-        <h1 className="neon-logo text-3xl sm:text-5xl md:text-7xl landscape:text-2xl font-bold leading-tight break-words max-w-full">
-          ASTRO STRIKE
-        </h1>
+        <PageTitle text="ASTRO STRIKE" />
 
         <div className="flex flex-col items-center gap-2 sm:gap-6 mt-2 sm:mt-4 landscape:mt-1">
           <div className="text-[10px] sm:text-base md:text-xl text-[#00ffcc] flash tracking-widest px-2 landscape:text-[8px] landscape:mb-1">
