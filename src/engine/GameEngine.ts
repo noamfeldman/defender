@@ -1,6 +1,25 @@
 import type { ControlState } from '../hooks/useControls';
-import type { Player, Enemy, Bullet, Particle } from '../types';
+import type { Player, Enemy, Bullet, Particle, LevelTheme } from '../types';
 import { audio } from '../utils/AudioEngine';
+
+/** All planet themes — cycles every 5 levels */
+const THEMES: LevelTheme[] = [
+  // Wave 1-4 — Classic Purple Planet
+  { skyColor: '#050510', terrainColor: '#ff00aa', terrainColorAlt: '#aa0077', starCount: 50, roughness: 1.0, scale: 1.0 },
+  // Wave 5-9 — Volcanic World
+  { skyColor: '#0f0500', terrainColor: '#ff4400', terrainColorAlt: '#ff2200', starCount: 30, roughness: 1.6, scale: 1.5 },
+  // Wave 10-14 — Frozen Tundra
+  { skyColor: '#000d1a', terrainColor: '#00ccff', terrainColorAlt: '#0077bb', starCount: 80, roughness: 0.6, scale: 0.6 },
+  // Wave 15-19 — Acid Caverns
+  { skyColor: '#020f02', terrainColor: '#00ff44', terrainColorAlt: '#009933', starCount: 40, roughness: 2.0, scale: 1.8 },
+  // Wave 20+ — Void Sector
+  { skyColor: '#080008', terrainColor: '#cc00ff', terrainColorAlt: '#8800cc', starCount: 20, roughness: 1.2, scale: 2.2 },
+];
+
+function getThemeForLevel(level: number): LevelTheme {
+  const idx = Math.min(Math.floor((level - 1) / 5), THEMES.length - 1);
+  return THEMES[idx];
+}
 
 export class GameEngine {
   public worldWidth = 4000;
@@ -43,7 +62,7 @@ export class GameEngine {
   }
 
   private spawnWave(level: number) {
-    const numLanders = 5 + level * 2;
+    const numLanders = Math.min(5 + level * 2, 20);
     for (let i = 0; i < numLanders; i++) {
       this.enemies.push({
         id: `lander-${Date.now()}-${i}`,
@@ -56,6 +75,43 @@ export class GameEngine {
         active: true,
         fireTimer: Math.random() * 3,
       });
+    }
+
+    // Add BOMBERS from wave 3 onwards
+    if (level >= 3) {
+      const numBombers = Math.min(Math.floor(level / 3), 6);
+      for (let i = 0; i < numBombers; i++) {
+        this.enemies.push({
+          id: `bomber-${Date.now()}-${i}`,
+          type: 'BOMBER',
+          x: Math.random() * this.worldWidth,
+          y: 60 + Math.random() * 80, // fly high
+          vx: (Math.random() < 0.5 ? -1 : 1) * (80 + level * 5),
+          vy: 0,
+          radius: 14,
+          active: true,
+          fireTimer: 1 + Math.random() * 2,
+          bombTimer: 2 + Math.random() * 3,
+        });
+      }
+    }
+
+    // Add INTERCEPTORS from wave 5 onwards
+    if (level >= 5) {
+      const numInterceptors = Math.min(Math.floor(level / 5), 4);
+      for (let i = 0; i < numInterceptors; i++) {
+        this.enemies.push({
+          id: `interceptor-${Date.now()}-${i}`,
+          type: 'INTERCEPTOR',
+          x: Math.random() * this.worldWidth,
+          y: 80 + Math.random() * (this.worldHeight / 2),
+          vx: (Math.random() - 0.5) * 200,
+          vy: (Math.random() - 0.5) * 100,
+          radius: 10,
+          active: true,
+          fireTimer: 0.5 + Math.random() * 1.5,
+        });
+      }
     }
   }
 
@@ -243,38 +299,81 @@ export class GameEngine {
       const terrainY = this.getTerrainY(e.x);
       if (e.y > terrainY - e.radius) {
           e.y = terrainY - e.radius;
-          if (e.vy > 0) e.vy *= -0.5; // bounce slightly off terrain
+          if (e.vy > 0) e.vy *= -0.5;
       }
 
-      // Basic wandering AI
-      if (Math.random() < 0.05) {
-        e.vx += (Math.random() - 0.5) * 50;
-        e.vy += (Math.random() - 0.5) * 50;
+      if (e.type === 'LANDER') {
+        // Basic wandering AI
+        if (Math.random() < 0.05) {
+          e.vx += (Math.random() - 0.5) * 50;
+          e.vy += (Math.random() - 0.5) * 50;
+        }
+        if (e.vx > 150) e.vx = 150;
+        if (e.vx < -150) e.vx = -150;
       }
 
-      // Max speeds
-      if (e.vx > 150) e.vx = 150;
-      if (e.vx < -150) e.vx = -150;
+      if (e.type === 'BOMBER') {
+        // Horizontal patrol — reverse if too slow
+        if (Math.abs(e.vx) < 40) e.vx = Math.sign(e.vx || 1) * 80;
+        // Stay high
+        const targetY = 80;
+        e.vy += (targetY - e.y) * 2 * dt;
+        e.vy *= 0.95;
+        // Periodic bomb drops
+        if (e.bombTimer !== undefined) {
+          e.bombTimer -= dt;
+          if (e.bombTimer <= 0) {
+            this.bullets.push({
+              id: `bomb-${Math.random()}`,
+              x: e.x, y: e.y + e.radius,
+              vx: e.vx * 0.3, // slight carry
+              vy: 80,  // drops downward
+              radius: 4,
+              active: true,
+              lifeTimer: 3.5,
+              isPlayerBullet: false,
+            });
+            e.bombTimer = 2.5 + Math.random() * 2;
+          }
+        }
+      }
 
+      if (e.type === 'INTERCEPTOR') {
+        // Actively steer toward player
+        const dx = this.getWrappedDx(e.x, this.player.x);
+        const dy = this.player.y - e.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > 0) {
+          const speed = 220 + this.level * 8;
+          e.vx += (-dx / dist) * speed * dt * 0.8;
+          e.vy += (dy / dist) * speed * dt * 0.8;
+        }
+        // Cap interceptor speed
+        const spd = Math.sqrt(e.vx * e.vx + e.vy * e.vy);
+        const maxSpd = 260 + this.level * 5;
+        if (spd > maxSpd) { e.vx = (e.vx / spd) * maxSpd; e.vy = (e.vy / spd) * maxSpd; }
+      }
+
+      // All enemies fire at player if close enough
       e.fireTimer -= dt;
       if (e.fireTimer <= 0) {
-        // Fire at player if close
         const dist = this.getWrappedDistance(e.x, e.y, this.player.x, this.player.y);
-        if (dist < 600) {
+        const fireRange = e.type === 'INTERCEPTOR' ? 400 : 600;
+        if (dist < fireRange) {
             const angle = Math.atan2(this.player.y - e.y, this.getWrappedDx(e.x, this.player.x));
             this.bullets.push({
                id: `ebullet-${Math.random()}`,
                x: e.x, y: e.y,
-               vx: Math.cos(angle) * 300,
-               vy: Math.sin(angle) * 300,
+               vx: Math.cos(angle) * (e.type === 'INTERCEPTOR' ? 380 : 300),
+               vy: Math.sin(angle) * (e.type === 'INTERCEPTOR' ? 380 : 300),
                radius: 3,
                active: true,
                lifeTimer: 2.0,
                isPlayerBullet: false,
             });
-            audio.playLaser(); // maybe a different sound for enemy
+            audio.playLaser();
         }
-        e.fireTimer = 2 + Math.random() * 3;
+        e.fireTimer = e.type === 'INTERCEPTOR' ? (1 + Math.random()) : (2 + Math.random() * 3);
       }
     });
 
@@ -396,14 +495,21 @@ export class GameEngine {
   }
 
   public getTerrainY(x: number): number {
-      const mountainBaseY = this.worldHeight - 50;
-      const val = Math.sin(x * 0.005) * 50 + Math.sin(x * 0.01) * 20;
-      return mountainBaseY - Math.abs(val);
+    const theme = getThemeForLevel(this.level);
+    const mountainBaseY = this.worldHeight - 50;
+    const r = theme.roughness;
+    const s = theme.scale;
+    const val = Math.sin(x * 0.005 * r) * 50 * s
+              + Math.sin(x * 0.012 * r) * 25 * s
+              + Math.sin(x * 0.003 * r) * 30 * s;
+    return mountainBaseY - Math.abs(val);
   }
 
   // --- RENDERING ---
   public draw(ctx: CanvasRenderingContext2D, width: number, height: number) {
-      ctx.fillStyle = '#050510';
+      const theme = getThemeForLevel(this.level);
+
+      ctx.fillStyle = theme.skyColor;
       ctx.fillRect(0, 0, width, height);
 
       ctx.save();
@@ -428,27 +534,80 @@ export class GameEngine {
       // Draw enemies
       this.enemies.forEach(e => {
           drawWrapped(e, (x, y) => {
-              const LANDER_SPRITE = [
-                "   GGGG   ",
-                "  GGGGGG  ",
-                " GGGGGGGG ",
-                " GGGGGGGG ",
-                " GG GG GG ",
-                " G  GG  G ",
-                "G   GG   G",
-                "G   GG   G"
-              ];
-              const pSize = 3;
-              const offX = -5 * pSize;
-              const offY = -4 * pSize;
+              if (e.type === 'LANDER') {
+                const LANDER_SPRITE = [
+                  "   GGGG   ",
+                  "  GGGGGG  ",
+                  " GGGGGGGG ",
+                  " GGGGGGGG ",
+                  " GG GG GG ",
+                  " G  GG  G ",
+                  "G   GG   G",
+                  "G   GG   G"
+                ];
+                const pSize = 3;
+                const offX = -5 * pSize;
+                const offY = -4 * pSize;
+                ctx.fillStyle = '#00ff00';
+                for (let r = 0; r < LANDER_SPRITE.length; r++) {
+                    for (let c = 0; c < LANDER_SPRITE[r].length; c++) {
+                        if (LANDER_SPRITE[r][c] === 'G') {
+                            ctx.fillRect(x + offX + c * pSize, y + offY + r * pSize, pSize, pSize);
+                        }
+                    }
+                }
+              }
 
-              ctx.fillStyle = '#00ff00';
-              for (let r = 0; r < LANDER_SPRITE.length; r++) {
-                  for (let c = 0; c < LANDER_SPRITE[r].length; c++) {
-                      if (LANDER_SPRITE[r][c] === 'G') {
-                          ctx.fillRect(x + offX + c * pSize, y + offY + r * pSize, pSize, pSize);
-                      }
-                  }
+              if (e.type === 'BOMBER') {
+                // Wide, menacing bomber sprite
+                const BOMBER_SPRITE = [
+                  "RRRRRRRRRRRR",
+                  "RRRRRRRRRRRR",
+                  "R R RRR R R ",
+                  "   RRRRR    ",
+                  "     RR     ",
+                ];
+                const pSize = 3;
+                const offX = -6 * pSize;
+                const offY = -3 * pSize;
+                ctx.fillStyle = '#ff4400';
+                for (let r = 0; r < BOMBER_SPRITE.length; r++) {
+                    for (let c = 0; c < BOMBER_SPRITE[r].length; c++) {
+                        if (BOMBER_SPRITE[r][c] === 'R') {
+                            ctx.fillRect(x + offX + c * pSize, y + offY + r * pSize, pSize, pSize);
+                        }
+                    }
+                }
+                // Engine flame (flickers)
+                ctx.fillStyle = Math.random() > 0.5 ? '#ffaa00' : '#ff4400';
+                ctx.fillRect(x - 3, y + offY + BOMBER_SPRITE.length * pSize, 6, 4);
+              }
+
+              if (e.type === 'INTERCEPTOR') {
+                // Sleek diagonal interceptor
+                const INTERCEPTOR_SPRITE = [
+                  " PP  ",
+                  "PPPP ",
+                  "PPPPP",
+                  "PPPP ",
+                  " PP  ",
+                ];
+                const pSize = 3;
+                const offX = -3 * pSize;
+                const offY = -3 * pSize;
+                ctx.fillStyle = '#cc00ff';
+                for (let r = 0; r < INTERCEPTOR_SPRITE.length; r++) {
+                    for (let c = 0; c < INTERCEPTOR_SPRITE[r].length; c++) {
+                        if (INTERCEPTOR_SPRITE[r][c] === 'P') {
+                            ctx.fillRect(x + offX + c * pSize, y + offY + r * pSize, pSize, pSize);
+                        }
+                    }
+                }
+                // Thruster glow
+                ctx.fillStyle = 'rgba(200, 0, 255, 0.4)';
+                ctx.beginPath();
+                ctx.arc(x, y, e.radius + 6, 0, Math.PI * 2);
+                ctx.fill();
               }
           });
       });
@@ -541,21 +700,41 @@ export class GameEngine {
   }
 
   private drawStars(ctx: CanvasRenderingContext2D, width: number, height: number) {
-      // Very simple deterministic stars based on cameraX
+      const theme = getThemeForLevel(this.level);
       ctx.fillStyle = '#ffffff';
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < theme.starCount; i++) {
          let sx = (i * 1234.5 - this.cameraX * 0.1) % width;
          if (sx < 0) sx += width;
          let sy = (i * 987.6) % height;
-         ctx.fillRect(sx, sy, 1, 1);
+         // Vary star size subtly by theme
+         const starSize = i % 7 === 0 ? 2 : 1;
+         ctx.fillRect(sx, sy, starSize, starSize);
       }
   }
 
   private drawMountains(ctx: CanvasRenderingContext2D, width: number, _height: number) {
-      ctx.strokeStyle = '#ff00aa';
+      const theme = getThemeForLevel(this.level);
+
+      // Background range (parallax, dimmer)
+      ctx.strokeStyle = theme.terrainColorAlt;
       ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.4;
       ctx.beginPath();
-      
+      for (let x = 0; x <= width; x += 10) {
+          const mathX = x + this.cameraX * 0.6;
+          const baseY = this.worldHeight - 50;
+          const r = theme.roughness * 0.7;
+          const s = theme.scale * 0.7;
+          const val = Math.sin(mathX * 0.004 * r) * 40 * s + Math.sin(mathX * 0.009 * r) * 20 * s;
+          ctx.lineTo(x, baseY - Math.abs(val) - 20);
+      }
+      ctx.stroke();
+      ctx.globalAlpha = 1.0;
+
+      // Foreground range
+      ctx.strokeStyle = theme.terrainColor;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
       for (let x = 0; x <= width; x += 10) {
           let mathX = (x + this.cameraX);
           let y = this.getTerrainY(mathX);

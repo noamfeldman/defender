@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { fetchGlobalHighScores } from '../utils/storage';
-import { useIsMobile } from '../hooks/useMobileDetection';
+import { useIsMobile, useOrientation } from '../hooks/useMobileDetection';
 import { HallOfFameDesktop } from './HallOfFameDesktop';
 import { HallOfFameMobile } from './HallOfFameMobile';
 import { Button } from './ui/Button';
+import { PageTitle } from './ui/PageTitle';
 import type { HighScore } from '../types';
 
 interface Props {
@@ -14,6 +15,8 @@ export const HighScoreScreen: React.FC<Props> = ({ onBack }) => {
   const [scores, setScores] = useState<HighScore[]>([]);
   const [loading, setLoading] = useState(true);
   const isMobile = useIsMobile();
+  const orientation = useOrientation();
+  const isLandscape = orientation === 'landscape' && isMobile;
 
   useEffect(() => {
     async function getScores() {
@@ -25,13 +28,25 @@ export const HighScoreScreen: React.FC<Props> = ({ onBack }) => {
   }, []);
 
   return (
-    <div className="w-full h-full flex flex-col items-center bg-black p-3 md:p-6 tracking-widest text-white overflow-hidden relative">
-        {/* Header - Very compact on small screens */}
-        <div className="flex flex-col items-center shrink-0 mt-1 sm:mt-4">
-          <h2 className="hall-of-fame mb-1 text-xl md:text-5xl lg:text-6xl text-center leading-tight">
-              GLOBAL LEADERBOARD
-          </h2>
-          <p className="text-[10px] md:text-sm text-[#00ffcc] animate-pulse mb-2">SHARED ACROSS ALL PILOTS</p>
+    <div className="w-full h-full flex flex-col items-center bg-black p-2 md:p-6 tracking-widest text-white overflow-hidden relative">
+        
+        {/* Landscape Return Button (at top) */}
+        {isLandscape && (
+            <div className="w-full flex justify-center mb-1 shrink-0">
+                <Button
+                    variant="secondary"
+                    onClick={onBack}
+                    className="h-8 text-[10px] py-1"
+                >
+                    RETURN TO MENU
+                </Button>
+            </div>
+        )}
+
+        {/* Header */}
+        <div className="flex flex-col items-center shrink-0 mt-0 sm:mt-4">
+          <PageTitle text="HIGH SCORES" as="h2" className="mb-0 landscape:text-lg" />
+          <p className="text-[8px] md:text-sm text-[#00ffcc] animate-pulse mb-4 md:mb-10">SHARED ACROSS GALAXIES</p>
         </div>
 
         {/* Content Area Container with Fade Effect */}
@@ -60,15 +75,17 @@ export const HighScoreScreen: React.FC<Props> = ({ onBack }) => {
             <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-black to-transparent z-10 pointer-events-none" />
         </div>
 
-        {/* Footer - Fixed at bottom */}
-        <div className="mt-3 flex flex-col items-center justify-center shrink-0 w-full mb-1">
-          <Button
-               variant="secondary"
-               onClick={onBack}
-          >
-               RETURN TO MENU
-          </Button>
-        </div>
+        {/* Footer - Only visible when not in landscape mobile to save vertical space */}
+        {!isLandscape && (
+            <div className="mt-2 flex flex-col items-center justify-center shrink-0 w-full mb-1">
+              <Button
+                   variant="secondary"
+                   onClick={onBack}
+              >
+                   RETURN TO MENU
+              </Button>
+            </div>
+        )}
     </div>
   );
 };

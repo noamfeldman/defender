@@ -211,3 +211,52 @@ body {
 .animate-pulse-slow {
   animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Retro Arcade Action Button */
+.arcade-button-retro {
+  background: radial-gradient(circle, var(--btn-color-light) 0%, var(--btn-color-dark) 100%);
+  border: 4px solid rgba(0,0,0,0.4);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 
+    0 6px 0 var(--btn-shadow-color),
+    0 12px 15px rgba(0, 0, 0, 0.4);
+  transition: all 0.1s ease;
+  outline: none;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: visible;
+}
+
+.arcade-button-retro:active {
+  transform: translateY(4px);
+  box-shadow: 
+    0 2px 0 var(--btn-shadow-color),
+    0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.arcade-button-retro::after {
+  content: '';
+  position: absolute;
+  top: 15%;
+  left: 15%;
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  filter: blur(5px);
+  pointer-events: none;
+}
+
+/* Size Variants */
+.arcade-button-large {
+  width: 100px;
+  height: 100px;
+}
+
+.arcade-button-small {
+  width: 60px;
+  height: 60px;
+}
